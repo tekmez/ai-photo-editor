@@ -2,6 +2,7 @@ import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
 import { SplashScreen } from "expo-router";
+import { useColorScheme } from "react-native";
 import "../global.css";
 
 // Splash screen'i font yüklenene kadar göster
@@ -14,6 +15,8 @@ export default function RootLayout() {
     "Ubuntu-Bold": require("../assets/fonts/Ubuntu-Bold.ttf"),
   });
 
+  const colorScheme = useColorScheme();
+
   useEffect(() => {
     if (fontsLoaded) {
       SplashScreen.hideAsync();
@@ -24,5 +27,22 @@ export default function RootLayout() {
     return null;
   }
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      <Stack.Screen name="(main)" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="modals/subscription"
+        options={{
+          presentation: "modal",
+          headerShown: false,
+        }}
+      />
+    </Stack>
+  );
 }
