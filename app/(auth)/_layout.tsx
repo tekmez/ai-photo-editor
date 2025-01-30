@@ -14,6 +14,7 @@ export default function AuthLayout() {
         contentStyle: {
           backgroundColor: "#0A0A0B",
         },
+        headerShown: false,
       }}
     />
   );

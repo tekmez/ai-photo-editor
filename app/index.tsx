@@ -1,7 +1,11 @@
 import { Redirect } from "expo-router";
+import { useAuthContext } from "../context/auth-context";
 
 export default function Index() {
-  // Şimdilik direkt ana sayfaya yönlendir
-  // Daha sonra auth durumuna göre yönlendirme yapılacak
-  return <Redirect href="/(main)/home" />;
+  const { user, loading } = useAuthContext();
+
+  if (loading) return null;
+
+  // Auth durumuna göre yönlendirme yap
+  return <Redirect href={user ? "/(main)/home" : "/(auth)/sign-in"} />;
 }
