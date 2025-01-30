@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Alert } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -16,13 +16,13 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function SignIn() {
-  const router = useRouter();
   const { signIn } = useAuthContext();
 
   const handleSubmit = async (values: { email: string; password: string }) => {
     try {
       await signIn(values.email, values.password);
-      // Başarılı giriş sonrası otomatik olarak ana sayfaya yönlendirilecek
+      // Başarılı giriş sonrası ana sayfaya yönlendir
+      router.replace("/(main)/home");
     } catch (error: any) {
       Alert.alert("Hata", error.message);
     }

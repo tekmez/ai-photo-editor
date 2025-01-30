@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Alert } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -20,13 +20,22 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function SignUp() {
-  const router = useRouter();
   const { signUp } = useAuthContext();
 
   const handleSubmit = async (values: { email: string; password: string }) => {
     try {
       await signUp(values.email, values.password);
-      // Başarılı kayıt sonrası otomatik olarak ana sayfaya yönlendirilecek
+      // Başarılı kayıt sonrası giriş sayfasına yönlendir
+      Alert.alert(
+        "Başarılı",
+        "Hesabınız başarıyla oluşturuldu. Şimdi giriş yapabilirsiniz.",
+        [
+          {
+            text: "Tamam",
+            onPress: () => router.replace("/(auth)/sign-in"),
+          },
+        ]
+      );
     } catch (error: any) {
       Alert.alert("Hata", error.message);
     }
