@@ -1,26 +1,53 @@
-import { View, Text, TouchableOpacity, TextInput, Image } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  Image,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
+import { generateImage } from "../../services/replicate";
 
 export default function Edit() {
   const router = useRouter();
   const [image, setImage] = useState<string | null>(null);
+  const [editedImage, setEditedImage] = useState<string | null>(null);
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
-
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: "images",
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.8,
+      base64: true,
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setImage(result.assets[0].uri || null);
+      setEditedImage(null);
+    }
+  };
+
+  const handleEdit = async () => {
+    if (!image || !prompt) return;
+
+    try {
+      setLoading(true);
+
+      // API'ye gönder
+      const editedImageUrl = await generateImage(image, prompt);
+      setEditedImage(editedImageUrl);
+    } catch (error: any) {
+      Alert.alert("Hata", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -42,7 +69,15 @@ export default function Edit() {
       {/* Main Content */}
       <View className="flex-1 p-4">
         {/* Image Preview */}
-        {image ? (
+        {editedImage ? (
+          <View className="aspect-[4/3] w-full bg-surface rounded-2xl overflow-hidden mb-4">
+            <Image
+              source={{ uri: editedImage }}
+              className="w-full h-full"
+              resizeMode="contain"
+            />
+          </View>
+        ) : image ? (
           <View className="aspect-[4/3] w-full bg-surface rounded-2xl overflow-hidden mb-4">
             <Image
               source={{ uri: image }}
@@ -74,11 +109,13 @@ export default function Edit() {
             onChangeText={setPrompt}
             multiline
             numberOfLines={3}
+            editable={!loading}
           />
           <View className="flex-row flex-wrap gap-2 mt-3">
             <TouchableOpacity
               className="bg-background-secondary px-3 py-1 rounded-full"
               onPress={() => setPrompt("Arka planı bulanıklaştır")}
+              disabled={loading}
             >
               <Text className="text-text-secondary">
                 Arka planı bulanıklaştır
@@ -87,12 +124,14 @@ export default function Edit() {
             <TouchableOpacity
               className="bg-background-secondary px-3 py-1 rounded-full"
               onPress={() => setPrompt("Gün batımı efekti ekle")}
+              disabled={loading}
             >
               <Text className="text-text-secondary">Gün batımı efekti</Text>
             </TouchableOpacity>
             <TouchableOpacity
               className="bg-background-secondary px-3 py-1 rounded-full"
               onPress={() => setPrompt("Anime tarzına dönüştür")}
+              disabled={loading}
             >
               <Text className="text-text-secondary">Anime tarzı</Text>
             </TouchableOpacity>
@@ -102,17 +141,27 @@ export default function Edit() {
         {/* Action Button */}
         <TouchableOpacity
           className={`w-full py-4 rounded-xl ${
-            image && prompt ? "bg-primary" : "bg-surface"
+            image && prompt && !loading ? "bg-primary" : "bg-surface"
           }`}
+          onPress={handleEdit}
           disabled={!image || !prompt || loading}
         >
-          <Text
-            className={`text-center font-Ubuntu-Medium ${
-              image && prompt ? "text-text-primary" : "text-text-tertiary"
-            }`}
-          >
-            {loading ? "Düzenleniyor..." : "Düzenle"}
-          </Text>
+          {loading ? (
+            <View className="flex-row items-center justify-center">
+              <ActivityIndicator color="#FFFFFF" />
+              <Text className="text-text-primary font-Ubuntu-Medium ml-2">
+                Düzenleniyor...
+              </Text>
+            </View>
+          ) : (
+            <Text
+              className={`text-center font-Ubuntu-Medium ${
+                image && prompt ? "text-text-primary" : "text-text-tertiary"
+              }`}
+            >
+              Düzenle
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
     </View>
