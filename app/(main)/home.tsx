@@ -1,7 +1,8 @@
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { MaterialIcons } from "@expo/vector-icons";
+import { FEATURES } from "../../constants/features";
+import FeatureCard from "../../components/features/FeatureCard";
 
 export default function Home() {
   const router = useRouter();
@@ -23,26 +24,20 @@ export default function Home() {
         </TouchableOpacity>
       </View>
 
-      {/* Main Content */}
-      <View className="flex-1 items-center justify-center p-4">
-        <View className="bg-surface rounded-3xl p-8 items-center w-full max-w-sm">
-          <MaterialIcons name="add-photo-alternate" size={64} color="#6366F1" />
-          <Text className="text-xl font-Ubuntu-Medium text-text-primary mt-4 text-center">
-            Fotoğraf Seç veya Çek
-          </Text>
-          <Text className="text-text-secondary text-center mt-2">
-            Fotoğrafını seç ve AI ile düzenlemeye başla
-          </Text>
-          <TouchableOpacity
-            className="bg-primary w-full py-4 rounded-xl mt-6"
-            onPress={() => router.push("/(main)/edit")}
-          >
-            <Text className="text-text-primary font-Ubuntu-Medium text-center">
-              Başla
-            </Text>
-          </TouchableOpacity>
+      {/* Features Grid */}
+      <ScrollView className="flex-1 p-4">
+        <Text className="text-xl font-Ubuntu-Medium text-text-primary mb-4">
+          Özellikler
+        </Text>
+
+        <View className="flex-row flex-wrap gap-4">
+          {FEATURES.map((feature) => (
+            <View key={feature.id} style={{ width: "47%" }}>
+              <FeatureCard feature={feature} />
+            </View>
+          ))}
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 }
