@@ -26,10 +26,6 @@ export default function Home() {
 
       {/* Features Grid */}
       <ScrollView className="flex-1 p-4">
-        <Text className="text-xl font-Ubuntu-Medium text-text-primary mb-4">
-          Özellikler
-        </Text>
-
         <View className="flex-row flex-wrap gap-4">
           {FEATURES.map((feature) => (
             <View key={feature.id} style={{ width: "47%" }}>
