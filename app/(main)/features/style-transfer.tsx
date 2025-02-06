@@ -2,10 +2,8 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Image,
   ActivityIndicator,
   Alert,
-  ScrollView,
   TextInput,
 } from "react-native";
 import { useRouter } from "expo-router";
@@ -15,6 +13,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 import { transferStyle } from "../../../services/ai-models/style-transfer";
 import { FEATURES } from "../../../constants/features";
+import ImagePreview from "../../../components/features/ImagePreview";
 import React from "react";
 
 export default function StyleTransfer() {
@@ -29,8 +28,6 @@ export default function StyleTransfer() {
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: "images",
-      allowsEditing: true,
-      aspect: [1, 1],
       quality: 0.8,
       base64: true,
     });
@@ -81,32 +78,14 @@ export default function StyleTransfer() {
       </View>
 
       {/* Main Content */}
-      <ScrollView className="flex-1 p-4">
-        {/* Image Preview - Before */}
-        <Text className="text-lg font-Ubuntu-Medium text-text-primary mb-2">
-          Orijinal Fotoğraf
-        </Text>
-        {image ? (
-          <View className="aspect-square w-full bg-surface rounded-2xl overflow-hidden mb-4">
-            <Image
-              source={{ uri: image }}
-              className="w-full h-full"
-              resizeMode="contain"
-            />
-          </View>
-        ) : (
-          <TouchableOpacity
-            onPress={pickImage}
-            className="aspect-square w-full bg-surface rounded-2xl items-center justify-center mb-4"
-          >
-            <MaterialIcons
-              name="add-photo-alternate"
-              size={48}
-              color="#6366F1"
-            />
-            <Text className="text-text-secondary mt-2">Fotoğraf Seç</Text>
-          </TouchableOpacity>
-        )}
+      <View className="flex-1 p-4">
+        {/* Image Preview */}
+        <ImagePreview
+          image={image}
+          processedImage={styledImage}
+          onImagePick={pickImage}
+          downloadFileName="styled-photo"
+        />
 
         {/* Style Input */}
         <View className="bg-surface rounded-2xl p-4 mb-4">
@@ -138,22 +117,6 @@ export default function StyleTransfer() {
           )}
         </View>
 
-        {/* Image Preview - After */}
-        {styledImage && (
-          <>
-            <Text className="text-lg font-Ubuntu-Medium text-text-primary mb-2">
-              Dönüştürülmüş Fotoğraf
-            </Text>
-            <View className="aspect-square w-full bg-surface rounded-2xl overflow-hidden mb-4">
-              <Image
-                source={{ uri: styledImage }}
-                className="w-full h-full"
-                resizeMode="contain"
-              />
-            </View>
-          </>
-        )}
-
         {/* Action Button */}
         <TouchableOpacity
           className={`w-full py-4 rounded-xl ${
@@ -179,7 +142,7 @@ export default function StyleTransfer() {
             </Text>
           )}
         </TouchableOpacity>
-      </ScrollView>
+      </View>
     </View>
   );
 }

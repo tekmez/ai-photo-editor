@@ -2,7 +2,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Image,
   ActivityIndicator,
   Alert,
 } from "react-native";
@@ -12,6 +11,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 import { removeBackground } from "../../../services/ai-models/background-remover";
+import ImagePreview from "../../../components/features/ImagePreview";
 
 export default function BackgroundRemover() {
   const router = useRouter();
@@ -21,9 +21,7 @@ export default function BackgroundRemover() {
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
+      mediaTypes: "images",
       quality: 0.8,
       base64: true,
     });
@@ -72,35 +70,12 @@ export default function BackgroundRemover() {
       {/* Main Content */}
       <View className="flex-1 p-4">
         {/* Image Preview */}
-        {processedImage ? (
-          <View className="aspect-[4/3] w-full bg-surface rounded-2xl overflow-hidden mb-4">
-            <Image
-              source={{ uri: processedImage }}
-              className="w-full h-full"
-              resizeMode="contain"
-            />
-          </View>
-        ) : image ? (
-          <View className="aspect-[4/3] w-full bg-surface rounded-2xl overflow-hidden mb-4">
-            <Image
-              source={{ uri: image }}
-              className="w-full h-full"
-              resizeMode="contain"
-            />
-          </View>
-        ) : (
-          <TouchableOpacity
-            onPress={pickImage}
-            className="aspect-[4/3] w-full bg-surface rounded-2xl items-center justify-center mb-4"
-          >
-            <MaterialIcons
-              name="add-photo-alternate"
-              size={48}
-              color="#6366F1"
-            />
-            <Text className="text-text-secondary mt-2">Fotoğraf Seç</Text>
-          </TouchableOpacity>
-        )}
+        <ImagePreview
+          image={image}
+          processedImage={processedImage}
+          onImagePick={pickImage}
+          downloadFileName="background-removed"
+        />
 
         {/* Action Button */}
         <TouchableOpacity

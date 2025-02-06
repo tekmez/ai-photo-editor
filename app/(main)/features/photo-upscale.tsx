@@ -2,7 +2,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Image,
   ActivityIndicator,
   Alert,
   ScrollView,
@@ -13,6 +12,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 import { upscalePhoto } from "../../../services/ai-models/photo-upscale";
+import ImagePreview from "../../../components/features/ImagePreview";
 import React from "react";
 
 export default function PhotoUpscale() {
@@ -24,8 +24,6 @@ export default function PhotoUpscale() {
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: "images",
-      allowsEditing: true,
-      aspect: [1, 1],
       quality: 0.8,
       base64: true,
     });
@@ -73,47 +71,14 @@ export default function PhotoUpscale() {
 
       {/* Main Content */}
       <ScrollView className="flex-1 p-4">
-        {/* Image Preview - Before */}
-        <Text className="text-lg font-Ubuntu-Medium text-text-primary mb-2">
-          Orijinal Fotoğraf
-        </Text>
-        {image ? (
-          <View className="aspect-square w-full bg-surface rounded-2xl overflow-hidden mb-4">
-            <Image
-              source={{ uri: image }}
-              className="w-full h-full"
-              resizeMode="contain"
-            />
-          </View>
-        ) : (
-          <TouchableOpacity
-            onPress={pickImage}
-            className="aspect-square w-full bg-surface rounded-2xl items-center justify-center mb-4"
-          >
-            <MaterialIcons
-              name="add-photo-alternate"
-              size={48}
-              color="#6366F1"
-            />
-            <Text className="text-text-secondary mt-2">Fotoğraf Seç</Text>
-          </TouchableOpacity>
-        )}
-
-        {/* Image Preview - After */}
-        {upscaledImage && (
-          <>
-            <Text className="text-lg font-Ubuntu-Medium text-text-primary mb-2">
-              İyileştirilmiş Fotoğraf
-            </Text>
-            <View className="aspect-square w-full bg-surface rounded-2xl overflow-hidden mb-4">
-              <Image
-                source={{ uri: upscaledImage }}
-                className="w-full h-full"
-                resizeMode="contain"
-              />
-            </View>
-          </>
-        )}
+        {/* Image Preview */}
+        <ImagePreview
+          image={image}
+          processedImage={upscaledImage}
+          onImagePick={pickImage}
+          downloadFileName="upscaled-photo"
+          aspectRatio="square"
+        />
 
         {/* Action Button */}
         <TouchableOpacity

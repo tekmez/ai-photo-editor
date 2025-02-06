@@ -65,6 +65,24 @@ export default function ImageGenerator() {
       {/* Main Content */}
       <ScrollView className="flex-1 p-4">
         {/* Prompt Input */}
+
+        {/* Image Preview */}
+        {generatedImage ? (
+          <View className="aspect-square w-full bg-surface rounded-2xl overflow-hidden mb-4">
+            <Image
+              source={{ uri: generatedImage }}
+              className="w-full h-full"
+              resizeMode="contain"
+            />
+          </View>
+        ) : (
+          <View className="aspect-square w-full bg-surface rounded-2xl items-center justify-center mb-4">
+            <MaterialIcons name="image" size={48} color="#6366F1" />
+            <Text className="text-text-secondary mt-2">
+              Görsel oluşturmak için prompt girin
+            </Text>
+          </View>
+        )}
         <View className="bg-surface rounded-2xl p-4 mb-4">
           <TextInput
             className="text-text-primary font-Ubuntu p-3 bg-background-secondary rounded-xl"
@@ -93,25 +111,6 @@ export default function ImageGenerator() {
             </View>
           )}
         </View>
-
-        {/* Image Preview */}
-        {generatedImage ? (
-          <View className="aspect-square w-full bg-surface rounded-2xl overflow-hidden mb-4">
-            <Image
-              source={{ uri: generatedImage }}
-              className="w-full h-full"
-              resizeMode="contain"
-            />
-          </View>
-        ) : (
-          <View className="aspect-square w-full bg-surface rounded-2xl items-center justify-center mb-4">
-            <MaterialIcons name="image" size={48} color="#6366F1" />
-            <Text className="text-text-secondary mt-2">
-              Görsel oluşturmak için prompt girin
-            </Text>
-          </View>
-        )}
-
         {/* Action Button */}
         <TouchableOpacity
           className={`w-full py-4 rounded-xl ${
