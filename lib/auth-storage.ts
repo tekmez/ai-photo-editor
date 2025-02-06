@@ -9,7 +9,7 @@ export const authStorage = {
         uid: user.uid,
         email: user.email,
       } : null;
-      
+
       await AsyncStorage.setItem(AUTH_KEY, JSON.stringify(userData));
     } catch (error) {
       console.error('Auth verisi kaydedilemedi:', error);
